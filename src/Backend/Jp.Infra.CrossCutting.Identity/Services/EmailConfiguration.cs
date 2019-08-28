@@ -10,5 +10,7 @@
         public string FromAddress { get; set; }
         public bool SendEmail { get; set; }
         public bool UseSsl { get; set; }
+        public int SmtpDeliveryMethod { get; set; } = 0; // Network
+        public string PickupDirectory { get; set; } = string.Empty; // Required if DeliveryMethod is 1 => SpecifiedPickupDirectory  
     }
 }

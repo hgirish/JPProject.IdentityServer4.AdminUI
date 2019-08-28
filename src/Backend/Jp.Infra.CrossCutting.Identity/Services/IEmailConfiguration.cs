@@ -13,5 +13,7 @@ namespace Jp.Infra.CrossCutting.Identity.Services
         string FromAddress { get; set; }
         bool SendEmail { get; set; }
         bool UseSsl { get; set; }
+        int SmtpDeliveryMethod { get; set; } 
+        string PickupDirectory { get; set; }
     }
 }

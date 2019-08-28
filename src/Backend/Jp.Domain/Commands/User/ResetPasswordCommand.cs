@@ -4,7 +4,7 @@ namespace Jp.Domain.Commands.User
 {
     public class ResetPasswordCommand : UserCommand
     {
-        public string Code { get; }
+        //public string Code { get; }
 
         public ResetPasswordCommand(string password, string confirmPassword, string code, string email)
         {

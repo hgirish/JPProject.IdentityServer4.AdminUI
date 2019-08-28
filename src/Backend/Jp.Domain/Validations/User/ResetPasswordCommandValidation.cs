@@ -12,11 +12,11 @@ namespace Jp.Domain.Validations.User
             ValidateCode();
         }
 
-        protected void ValidateCode()
-        {
-            RuleFor(c => c.Code)
-                .NotEmpty();
-        }
+        //protected void ValidateCode()
+        //{
+        //    RuleFor(c => c.Code)
+        //        .NotEmpty();
+        //}
 
     }
 }

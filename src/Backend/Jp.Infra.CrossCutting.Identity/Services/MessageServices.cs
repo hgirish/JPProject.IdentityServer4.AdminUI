@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
@@ -29,7 +31,10 @@ namespace Jp.Infra.CrossCutting.Identity.Services
             {
                 Text = message
             };
-
+            if (_emailConfiguration.SmtpDeliveryMethod == (int)System.Net.Mail.SmtpDeliveryMethod.SpecifiedPickupDirectory)
+            {
+                SendToPickupDirectory(mimeMessage, _emailConfiguration.PickupDirectory);
+            }
             //Be careful that the SmtpClient class is the one from Mailkit not the framework!
             using (var client = new SmtpClient())
             {
@@ -38,11 +43,35 @@ namespace Jp.Infra.CrossCutting.Identity.Services
                 client.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, _emailConfiguration.UseSsl);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 client.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
-
+                
                 await client.SendAsync(mimeMessage);
                 client.Disconnect(true);
             }
 
+        }
+        void SendToPickupDirectory(MimeMessage message, string pickupDirectory)
+        {
+            do
+            {
+                var path = Path.Combine(pickupDirectory, Guid.NewGuid().ToString() + ".eml");
+
+                if (File.Exists(path))
+                    continue;
+
+                try
+                {
+                    using (var stream = new FileStream(path, FileMode.CreateNew))
+                    {
+                        message.WriteTo(stream);
+                        return;
+                    }
+                }
+                catch (IOException)
+                {
+                    // The file may have been created between our File.Exists() check and
+                    // our attempt to create the stream.
+                }
+            } while (true);
         }
     }
 
